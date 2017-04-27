@@ -1,4 +1,5 @@
 #coding=utf-8
+'''
 from numpy import *
 import operator
 from os import listdir
@@ -54,31 +55,56 @@ def handWritingClassTest():
     print 'the totalnumber of errors is: %d' % errorCount
     print '\nthe total error rate is: %f' % (errorCount/float(mTest))
 handWritingClassTest()
-
+'''
 #使用sklearn实现
-'''
-# from sklearn import neighbors
-# knn=neighbors.KNeighborsClassifier()
-# def get_data_and_labels(file_list):
-#     training_files=listdir(file_list)
-#     m=len(training_files)
-#     labels=[]
-#     data=zeros((m,1024))
-#     for i in range(m):
-#         file_name=training_files[i] #文件名
-#         class_num=(file_name.split('.')[0]).split('_')[0] #类标签
-#         labels.append(int(class_num))
-#         data[i,:]=img2vector(file_list+'/%s' % file_name)
-#     return data,array(labels)
-# training_data,training_labels=get_data_and_labels('trainingDigits')
-# print training_data.shape,training_labels.shape
-# test_data,test_labels=get_data_and_labels('testDigits')
-# print test_data.shape,test_labels.shape
-# knn.fit(training_data,training_labels)
-# error_count=0
-# for i in range(test_data.shape[0]):
-#     pre=knn.predict(test_data[i,:])
-#     if pre!=test_labels[i]:
-#         error_count+=1
-# print error_count
-'''
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from sklearn import neighbors,datasets
+
+#简单使用
+# n_neighbors=15
+# iris=datasets.load_iris()#加载数据集
+# X=iris.data
+# y=iris.target
+# clf=neighbors.KNeighborsClassifier(n_neighbors)
+# clf.fit(X,y)
+# print X,clf.predict([[7.2,3.0,5,2],[5.2,3.5,1.5,0.2]])
+
+#使用鸢尾花数据并作图
+# n_neighbors=15
+# iris=datasets.load_iris()#加载数据集
+# X=iris.data[:,:2]#只用前两维
+# y=iris.target
+# h=.02
+# cmap_light=ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF'])
+# cmap_bold = ListedColormap(['#FF0000', '#00FF00', '#0000FF'])
+# for weights in ["uniform","distance"]:
+#     clf=neighbors.KNeighborsClassifier(n_neighbors,weights,algorithm='auto',leaf_size=30)
+#     clf.fit(X,y)
+#     x_min,x_max=X[:,0].min()-1,X[:,0].max()+1#第一维的最小值和最大值
+#     y_min,y_max=X[:,1].min()-1,X[:,1].max()+1#第二维的最小值和最大值
+#     xx,yy=np.meshgrid(np.arange(x_min,x_max,h),np.arange(y_min,y_max,h))
+#     Z=clf.predict(np.c_[xx.ravel(),yy.ravel()])
+#     Z=Z.reshape(xx.shape)
+#     plt.figure()
+#     plt.pcolormesh(xx,yy,Z,cmap=cmap_light)
+#     plt.scatter(X[:, 0], X[:, 1], c=y, cmap=cmap_bold)
+#     plt.xlim(xx.min(), xx.max())
+#     plt.ylim(yy.min(), yy.max())
+#     plt.title("3-Class classification (k = %i, weights = '%s')"
+#               % (n_neighbors, weights))
+# plt.show()
+
+#找到最近邻，方法1：
+# X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
+# nbrs = neighbors.NearestNeighbors(n_neighbors=3, algorithm='kd_tree').fit(X)#维度较低如低于20时用kd_tree，更低时用brute_force蛮力算法
+# distances, indices = nbrs.kneighbors([[0,1]])#找到与(0,1)点最近的3个点,也可以把多个点放在一个列表里作为参数
+# print indices,distances# distances是与(0,1)点最近的3个点的索引，distances是与这3个点的距离
+
+#找到最近邻，方法2：
+# X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
+# kdt=neighbors.KDTree(X,leaf_size=30,metric='euclidean')#Ball_tree用法相同，leaf_size越大，树的构建越快，但是查询越慢
+# indices=kdt.query([[0,1]],return_distance=False)
+# print indices
+
