@@ -1,4 +1,5 @@
 #coding=utf-8
+'''
 from math import log
 import operator
 def calcShannonEnt(dataSet):#计算香农熵
@@ -76,3 +77,15 @@ def createTree(dataSet,labels):#创建树
 data,labels=create_data_set()
 tree=createTree(data,labels)
 print tree
+'''
+'''
+#用sklearn包实现
+from sklearn import tree
+from sklearn import datasets
+iris=datasets.load_iris()
+X=iris.data
+y=iris.target
+clf=tree.DecisionTreeClassifier()
+clf=clf.fit(X,y)
+print clf.predict([[5.,3.,6.,7.]])
+'''
